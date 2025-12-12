@@ -1,0 +1,89 @@
+<div class="chatbot-container">
+  <!-- Bouton d'ouverture -->
+  <button *ngIf="!isOpen" 
+          (click)="isOpen = true" 
+          class="chat-toggle-btn">
+    <span class="chat-icon">💬</span>
+    <span class="sparkle-icon">✨</span>
+    <span class="notification-badge">!</span>
+  </button>
+
+  <!-- Fenêtre du chatbot -->
+  <div *ngIf="isOpen" class="chat-window">
+    <!-- En-tête -->
+    <div class="chat-header">
+      <div class="header-content">
+        <div class="header-icon">
+          <span>🤖</span>
+        </div>
+        <div class="header-text">
+          <h3>Assistant IA Portfolio</h3>
+          <p>Amal Klouz - Full Stack Developer</p>
+        </div>
+      </div>
+      <button (click)="isOpen = false" class="close-btn">
+        <span>✕</span>
+      </button>
+    </div>
+
+    <!-- Conteneur des messages - IMPORTANT: AJOUTER L'ID -->
+    <div class="messages-container" id="messagesContainer">
+      <div *ngFor="let message of messages" 
+           class="message {{message.role}}">
+        
+        <div *ngIf="message.role === 'assistant'" class="avatar assistant">
+          🤖
+        </div>
+
+        <div class="message-bubble {{message.role}}">
+          <p>{{message.content}}</p>
+        </div>
+
+        <div *ngIf="message.role === 'user'" class="avatar user">
+          👤
+        </div>
+      </div>
+
+      <!-- Indicateur de chargement -->
+      <div *ngIf="isLoading" class="message assistant">
+        <div class="avatar assistant">🤖</div>
+        <div class="message-bubble assistant loading">
+          <div class="loading-dots">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <span class="loading-text">Assistant réfléchit...</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Questions suggérées -->
+    <div *ngIf="messages.length === 1" class="suggested-questions">
+      <p class="suggested-title">💡 Questions suggérées :</p>
+      <div class="questions-grid">
+        <button *ngFor="let question of suggestedQuestions"
+                (click)="onSuggestedQuestionClick(question)"
+                class="question-btn">
+          {{question}}
+        </button>
+      </div>
+    </div>
+
+    <!-- Zone de saisie -->
+    <div class="input-container">
+      <input type="text"
+             [(ngModel)]="input"
+             (keydown)="onKeyPress($event)"
+             placeholder="Écrivez votre question ici..."
+             [disabled]="isLoading"
+             class="message-input"
+             #messageInput>
+      <button (click)="sendMessage()"
+              [disabled]="!input.trim() || isLoading"
+              class="send-btn">
+        <span>➤</span>
+      </button>
+    </div>
+  </div>
+</div>

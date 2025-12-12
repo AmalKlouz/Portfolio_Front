@@ -1,0 +1,65 @@
+<div class="profile-container">
+  <mat-card 
+    *ngFor="let profile of profiles" 
+    class="profile-card" 
+    appearance="outlined"
+    (click)="openProfileDialog(profile)"
+    >
+    <div class="profile-header">
+      <img 
+        [src]="getProfilePhoto(profile.photoUrl)" 
+        [alt]="profile.fullName"
+        class="profile-photo"
+        >
+    </div>
+    
+    <mat-card-header>
+      <mat-card-title class="profile-name">{{ profile.fullName }}</mat-card-title>
+      <mat-card-subtitle class="profile-title">{{ profile.title }}</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <p class="profile-bio">{{ profile.bio | slice:0:150 }}{{ profile.bio?.length > 150 ? '...' : '' }}</p>
+      
+      <div class="profile-links" (click)="$event.stopPropagation()">
+        <a mat-icon-button color="primary" *ngIf="profile.email" [href]="'mailto:' + profile.email">
+          <mat-icon>email</mat-icon>
+        </a>
+        <a mat-icon-button color="primary" *ngIf="profile.linkedin" [href]="profile.linkedin" target="_blank">
+          <mat-icon>link</mat-icon>
+        </a>
+        <a mat-icon-button color="primary" *ngIf="profile.github" [href]="profile.github" target="_blank">
+          <mat-icon>code</mat-icon>
+        </a>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- POPUP SIMPLE POUR BIO COMPLÈTE -->
+<div class="bio-popup-overlay" *ngIf="selectedProfile" (click)="closeProfileDialog()">
+  <div class="bio-popup" (click)="$event.stopPropagation()">
+    <div class="popup-header">
+      <h3>Complete Bio</h3>
+      <button mat-icon-button class="popup-close-btn" (click)="closeProfileDialog()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="popup-content">
+      <!-- Bio complète avec sauts de ligne préservés -->
+      <div class="full-bio">
+        {{ selectedProfile.bio }}
+      </div>
+    </div>
+    
+    <div class="popup-footer">
+      <button mat-button (click)="closeProfileDialog()">Close</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="profiles.length === 0" class="empty-state">
+  <mat-icon>person_outline</mat-icon>
+  <p>No profile information available</p>
+</div>

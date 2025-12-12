@@ -1,0 +1,54 @@
+<mat-card class="contact-card" appearance="outlined">
+  <form [formGroup]="contactForm" (ngSubmit)="submitMessage()" class="contact-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" placeholder="Your name">
+      <mat-icon matPrefix>person</mat-icon>
+      <mat-error *ngIf="contactForm.get('name')?.hasError('required')">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+<div></div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput formControlName="email" type="email" placeholder="your.email@example.com">
+      <mat-icon matPrefix>email</mat-icon>
+      <mat-error *ngIf="contactForm.get('email')?.hasError('required')">
+        Email is required
+      </mat-error>
+      <mat-error *ngIf="contactForm.get('email')?.hasError('email')">
+        Please enter a valid email
+      </mat-error>
+    </mat-form-field>
+<div></div>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Message</mat-label>
+      <textarea 
+        matInput 
+        formControlName="message" 
+        rows="6"
+        placeholder="Your message here..."></textarea>
+      <mat-icon matPrefix>message</mat-icon>
+      <mat-error *ngIf="contactForm.get('message')?.hasError('required')">
+        Message is required
+      </mat-error>
+    </mat-form-field>
+<div></div>
+
+    <button 
+      mat-raised-button 
+      color="primary" 
+      type="submit"
+      [disabled]="contactForm.invalid || isSubmitting"
+      class="submit-button">
+      <mat-icon *ngIf="!isSubmitting">send</mat-icon>
+      <span>{{ isSubmitting ? 'Sending...' : 'Send Message' }}</span>
+    </button>
+  </form>
+  
+  <div *ngIf="successMessage" class="success-message">
+    <mat-icon>check_circle</mat-icon>
+    <p>{{ successMessage }}</p>
+  </div>
+</mat-card>

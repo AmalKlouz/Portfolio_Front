@@ -1,0 +1,118 @@
+<!-- Popup overlay -->
+<div *ngIf="showPopup" class="popup-overlay" (click)="closePopup()">
+  <div class="popup-content" (click)="$event.stopPropagation()">
+    
+    <button class="close-btn" (click)="closePopup()">
+      <mat-icon>close</mat-icon>
+    </button>
+    
+    <div *ngIf="selectedProject" class="project-popup">
+      
+      <!-- Carrousel d'images -->
+      <div class="image-carousel">
+        <img [src]="currentPopupImage" 
+             [alt]="selectedProject.title"
+             class="popup-image">
+        
+        <button *ngIf="selectedProject.images && selectedProject.images.length > 1" 
+                class="carousel-btn prev" 
+                (click)="prevImage()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        
+        <button *ngIf="selectedProject.images && selectedProject.images.length > 1" 
+                class="carousel-btn next" 
+                (click)="nextImage()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+        
+        <div *ngIf="selectedProject.images && selectedProject.images.length > 1" 
+             class="carousel-indicators">
+          <span *ngFor="let img of selectedProject.images; let i = index" 
+                [class.active]="i === currentImageIndex"
+                (click)="currentImageIndex = i">
+          </span>
+        </div>
+      </div>
+      
+      <!-- Détails du projet -->
+      <div class="project-details">
+        <h2>{{ selectedProject.title }}</h2>
+        
+        <div class="project-description-popup">
+          {{ selectedProject.description }}
+        </div>
+        
+     
+        
+        <!-- Liens -->
+        
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Liste des projets -->
+<div class="project-grid">
+  <mat-card *ngFor="let project of projects" 
+            class="project-card" 
+            appearance="outlined"
+            (dblclick)="openProjectPopup(project)">
+    
+    <!-- Première image seulement -->
+    <div class="project-image-container">
+      <img [src]="getFirstImage(project)" 
+           [alt]="project.title"
+           class="project-image">
+      <span *ngIf="project.images && project.images.length > 1" class="image-count-badge">
+        <mat-icon>photo_library</mat-icon>
+        {{ project.images.length }}
+      </span>
+    </div>
+    
+    <mat-card-header>
+      <mat-card-title>{{ project.title }}</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <!-- Description courte -->
+      <p class="project-description">
+        {{ (project.description | slice:0:100) + (project.description.length > 100 ? '...' : '') }}
+      </p>
+      
+      <!-- Technologies (premières seulement) -->
+     <!-- Technologies avec vérification -->
+<div class="technologies" *ngIf="project.technologies">
+  <mat-chip-set>
+    <!-- Convertir la chaîne en tableau avant de faire *ngFor -->
+    <ng-container *ngIf="getTechnologiesArray(project.technologies) as techArray">
+      <mat-chip *ngFor="let tech of techArray">
+        {{ tech }}
+      </mat-chip>
+    </ng-container>
+  </mat-chip-set>
+</div>
+      
+      <div class="double-click-hint">
+        <small>Double-cliquez pour voir plus</small>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<!-- États -->
+<div *ngIf="loading" class="loading-state">
+  <mat-spinner diameter="50"></mat-spinner>
+  <p>Chargement des projets...</p>
+</div>
+
+<div *ngIf="projects.length === 0 && !loading" class="empty-state">
+  <mat-icon>work_outline</mat-icon>
+  <p>Aucun projet disponible</p>
+</div>
+
+<div *ngIf="errorMessage && !loading" class="error-state">
+  <mat-icon color="warn">error</mat-icon>
+  <p>{{ errorMessage }}</p>
+  <button mat-button (click)="loadProjects()">Réessayer</button>
+</div>

@@ -1,0 +1,170 @@
+<div class="portfolio-wrapper">
+  <!-- Navigation fixe -->
+  <nav class="portfolio-nav" [class.scrolled]="isScrolled">
+    <div class="nav-container">
+      <button mat-button class="nav-button" (click)="scrollToSection('profile')">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-button class="nav-button" (click)="scrollToSection('projects')">
+        <mat-icon>rocket_launch</mat-icon>
+        <span>Projects</span>
+      </button>
+      <button mat-button class="nav-button" (click)="scrollToSection('cv')">
+        <mat-icon>description</mat-icon>
+        <span>CV</span>
+      </button>
+      <button mat-button class="nav-button" (click)="scrollToSection('contact')">
+        <mat-icon>mail</mat-icon>
+        <span>Contact</span>
+      </button>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Welcome to My Portfolio</h1>
+      <p class="hero-subtitle">Full Stack Engineer · Modern Web Applications · Clean Architecture</p>
+    </div>
+  </div>
+
+  <div class="container">
+    <mat-card id="profile" class="section-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title class="section-title">
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <app-profile-list></app-profile-list>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card id="projects" class="section-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title class="section-title">
+          <mat-icon>rocket_launch</mat-icon>
+          <span>Projects</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <app-project-list></app-project-list>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card id="cv" class="section-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title class="section-title">
+          <mat-icon>description</mat-icon>
+          <span>CV</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <app-cv-list></app-cv-list>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card id="contact" class="section-card" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title class="section-title">
+          <mat-icon>mail</mat-icon>
+          <span>Contact Me</span>
+        </mat-card-title>
+      </mat-card-header>
+      <mat-divider></mat-divider>
+      <mat-card-content>
+        <app-contact-create></app-contact-create>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="portfolio-footer">
+    <div class="footer-container">
+      <div class="footer-content">
+        <!-- Informations de contact -->
+        <div class="footer-section contact-info">
+          <h3 class="footer-title">Amal Klouz</h3>
+          <p class="footer-subtitle">Full Stack Engineer</p>
+          
+          <div class="contact-details">
+            <div class="contact-item">
+              <mat-icon>phone</mat-icon>
+              <a href="tel:+21627555303" class="contact-link">+216 27 555 303</a>
+            </div>
+            
+           <div class="contact-item">
+  <mat-icon>email</mat-icon>
+  <a href="mailto:amal.klouz&#64;esprit.tn" class="contact-link">amal.klouz&#64;esprit.tn</a>
+</div>
+            
+            <div class="contact-item">
+              <mat-icon>location_on</mat-icon>
+              <span class="contact-text">Bizerte, Tunisie</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Liens sociaux -->
+        <div class="footer-section social-links">
+          <h3 class="footer-title">Connect with me</h3>
+          
+          <div class="social-icons">
+            <a href="https://tn.linkedin.com/in/amal-klouz-989674283?trk=people-guest_people_search-card" 
+               target="_blank" 
+               class="social-link linkedin"
+               matTooltip="LinkedIn Profile">
+              <mat-icon>linkedin</mat-icon>
+              <span>LinkedIn</span>
+            </a>
+            
+            <a href="https://github.com/amalklouz" 
+               target="_blank" 
+               class="social-link github"
+               matTooltip="GitHub Profile">
+              <mat-icon>code</mat-icon>
+              <span>GitHub</span>
+            </a>
+            
+            <a href="mailto:amal.klouz@esprit.tn" 
+               class="social-link email"
+               matTooltip="Send Email">
+              <mat-icon>email</mat-icon>
+              <span>Email</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Navigation rapide -->
+        <div class="footer-section quick-links">
+          <h3 class="footer-title">Quick Links</h3>
+          
+          <div class="quick-nav">
+            <button mat-button (click)="scrollToSection('profile')">Profile</button>
+            <button mat-button (click)="scrollToSection('projects')">Projects</button>
+            <button mat-button (click)="scrollToSection('cv')">CV</button>
+            <button mat-button (click)="scrollToSection('contact')">Contact</button>
+          </div>
+        </div>
+      </div>
+  <app-chatbot></app-chatbot>
+
+      <!-- Copyright -->
+      <div class="footer-bottom">
+        <div class="copyright">
+          <mat-icon>copyright</mat-icon>
+          <span>2025 Amal Klouz. All rights reserved.</span>
+        </div>
+        <div class="made-with">
+          <span>Made with</span>
+          <mat-icon class="heart-icon">favorite</mat-icon>
+          <span>using Angular & Material</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>

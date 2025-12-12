@@ -1,0 +1,46 @@
+<div class="cv-container">
+  <div class="cv-grid">
+    <mat-card *ngFor="let cv of cvs" class="cv-card" appearance="outlined">
+      <mat-card-header>
+        <mat-icon mat-card-avatar class="cv-icon">description</mat-icon>
+        <mat-card-title>{{ cv.filename }}</mat-card-title>
+        <mat-card-subtitle *ngIf="cv.language">{{ cv.language }}</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <p class="cv-date" *ngIf="cv.uploadedAt">
+          Uploaded: {{ cv.uploadedAt | date:'mediumDate' }}
+        </p>
+      </mat-card-content>
+      
+      <mat-card-actions align="end">
+        <button mat-button color="primary" (click)="viewPdf(cv.filename)">
+          <mat-icon>visibility</mat-icon>
+          View
+        </button>
+        <a mat-button color="accent" [href]="'http://localhost:9000/api/cvfiles/download/' + cv.filename" download>
+          <mat-icon>download</mat-icon>
+          Download
+        </a>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>
+
+<div *ngIf="cvs.length === 0" class="empty-state">
+  <mat-icon>description</mat-icon>
+  <p>No CV files available</p>
+</div>
+
+<!-- PDF Viewer Modal -->
+<div class="pdf-viewer-overlay" *ngIf="selectedPdf" (click)="closeViewer()">
+  <div class="pdf-viewer-container" (click)="$event.stopPropagation()">
+    <div class="viewer-header">
+      <h3>CV Preview</h3>
+      <button mat-icon-button (click)="closeViewer()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <iframe [src]="selectedPdf" class="pdf-iframe"></iframe>
+  </div>
+</div>
