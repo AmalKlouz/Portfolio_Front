@@ -1,39 +1,76 @@
-<div class="portfolio-wrapper">
-  <!-- Navigation fixe -->
+<!-- ================= HOME / PORTFOLIO ================= -->
+<div *ngIf="isHomePage; else otherPages" class="portfolio-wrapper">
+
+  <!-- NAVIGATION -->
   <nav class="portfolio-nav" [class.scrolled]="isScrolled">
     <div class="nav-container">
       <button mat-button class="nav-button" (click)="scrollToSection('profile')">
         <mat-icon>person</mat-icon>
         <span>Profile</span>
       </button>
+
       <button mat-button class="nav-button" (click)="scrollToSection('projects')">
         <mat-icon>rocket_launch</mat-icon>
         <span>Projects</span>
       </button>
+
       <button mat-button class="nav-button" (click)="scrollToSection('cv')">
         <mat-icon>description</mat-icon>
         <span>CV</span>
       </button>
+
       <button mat-button class="nav-button" (click)="scrollToSection('contact')">
         <mat-icon>mail</mat-icon>
         <span>Contact</span>
       </button>
     </div>
+
+    <!-- ACTIONS UTILISATEUR -->
+    <div class="user-actions">
+      <ng-container *ngIf="currentUser; else loginButton">
+        <button
+          mat-button
+          class="nav-button"
+          *ngIf="currentUser.role === 'ADMIN'"
+          (click)="goToAdmin()">
+          <mat-icon>admin_panel_settings</mat-icon>
+          <span>Admin</span>
+        </button>
+
+        <button mat-button class="nav-button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </ng-container>
+
+      <ng-template #loginButton>
+        <button mat-button class="nav-button" routerLink="/login">
+          <mat-icon>login</mat-icon>
+          <span>Login</span>
+        </button>
+      </ng-template>
+    </div>
   </nav>
 
+  <!-- HERO -->
   <div class="hero">
     <div class="hero-content">
       <h1 class="hero-title">Welcome to My Portfolio</h1>
-      <p class="hero-subtitle">Full Stack Engineer · Modern Web Applications · Clean Architecture</p>
+      <p class="hero-subtitle">
+        Full Stack Engineer · Modern Web Applications · Clean Architecture
+      </p>
     </div>
   </div>
 
+  <!-- CONTENU PRINCIPAL -->
   <div class="container">
+
+    <!-- SECTION PROFILE -->
     <mat-card id="profile" class="section-card" appearance="outlined">
       <mat-card-header>
-        <mat-card-title class="section-title">
+        <mat-card-title>
           <mat-icon>person</mat-icon>
-          <span>Profile</span>
+          Profile
         </mat-card-title>
       </mat-card-header>
       <mat-divider></mat-divider>
@@ -42,11 +79,12 @@
       </mat-card-content>
     </mat-card>
 
+    <!-- SECTION PROJECTS -->
     <mat-card id="projects" class="section-card" appearance="outlined">
       <mat-card-header>
-        <mat-card-title class="section-title">
+        <mat-card-title>
           <mat-icon>rocket_launch</mat-icon>
-          <span>Projects</span>
+          Projects
         </mat-card-title>
       </mat-card-header>
       <mat-divider></mat-divider>
@@ -55,11 +93,12 @@
       </mat-card-content>
     </mat-card>
 
+    <!-- SECTION CV -->
     <mat-card id="cv" class="section-card" appearance="outlined">
       <mat-card-header>
-        <mat-card-title class="section-title">
+        <mat-card-title>
           <mat-icon>description</mat-icon>
-          <span>CV</span>
+          CV
         </mat-card-title>
       </mat-card-header>
       <mat-divider></mat-divider>
@@ -68,11 +107,12 @@
       </mat-card-content>
     </mat-card>
 
+    <!-- SECTION CONTACT -->
     <mat-card id="contact" class="section-card" appearance="outlined">
       <mat-card-header>
-        <mat-card-title class="section-title">
+        <mat-card-title>
           <mat-icon>mail</mat-icon>
-          <span>Contact Me</span>
+          Contact Me
         </mat-card-title>
       </mat-card-header>
       <mat-divider></mat-divider>
@@ -80,6 +120,7 @@
         <app-contact-create></app-contact-create>
       </mat-card-content>
     </mat-card>
+
   </div>
 
   <!-- FOOTER -->
@@ -153,18 +194,32 @@
       </div>
   <app-chatbot></app-chatbot>
 
-      <!-- Copyright -->
-      <div class="footer-bottom">
-        <div class="copyright">
-          <mat-icon>copyright</mat-icon>
-          <span>2025 Amal Klouz. All rights reserved.</span>
-        </div>
-        <div class="made-with">
-          <span>Made with</span>
-          <mat-icon class="heart-icon">favorite</mat-icon>
-          <span>using Angular & Material</span>
-        </div>
+
+      <!-- CHATBOT (dans le footer si vous le souhaitez) -->
+      <!-- <app-chatbot></app-chatbot> -->
+
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="footer-bottom">
+      <div class="copyright">
+        <mat-icon>copyright</mat-icon>
+        <span>2025 Amal Klouz. All rights reserved.</span>
+      </div>
+      <div class="made-with">
+        <span>Made with</span>
+        <mat-icon class="heart-icon">favorite</mat-icon>
+        <span>using Angular & Material</span>
       </div>
     </div>
   </footer>
+
+  <!-- CHATBOT (en dehors du footer, position fixe) -->
+  <app-chatbot></app-chatbot>
+
 </div>
+
+<!-- ================= AUTRES PAGES (LOGIN, DASHBOARD, ETC.) ================= -->
+<ng-template #otherPages>
+  <router-outlet></router-outlet>
+</ng-template>

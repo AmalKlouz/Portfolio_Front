@@ -7,6 +7,6 @@ export interface Project {
 }
 
 export interface ProjectImage {
-  id: number;
+  id?: number;
   imageUrl: string;
 }

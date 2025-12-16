@@ -22,7 +22,9 @@ export class ContactMessageService {
     return this.http.get<ContactMessage>(`${this.baseUrl}/${id}`);
   }
 
-  delete(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/${id}`);
-  }
+delete(id: number): Observable<any> {
+  return this.http.delete(`${this.baseUrl}/${id}`, {
+    responseType: 'text' as 'json'  // Indique qu'on attend du texte, pas du JSON
+  });
+}
 }

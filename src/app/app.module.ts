@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatChipsModule } from '@angular/material/chips';
 
@@ -41,6 +41,9 @@ import { ProfileService } from './services/profile.service';
 import { CvFileService } from './services/cv-file.service';
 import { ContactMessageService } from './services/contact-message.service';
 import { ChatbotComponent } from './components/chat-bot/chat-bot.component';
+import { LoginComponent } from './components/login/login.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { JwtInterceptor } from './auth/JwtInterceptor';
 
 @NgModule({
   declarations: [
@@ -56,7 +59,8 @@ import { ChatbotComponent } from './components/chat-bot/chat-bot.component';
 ProjectListComponent,
 ProfileListComponent,
 CvListComponent,
-ContactCreateComponent,MatChipsModule,
+ContactCreateComponent,MatChipsModule,LoginComponent,
+    DashboardComponent,ReactiveFormsModule,
 
 
     // Angular Material Modules
@@ -83,7 +87,7 @@ ContactCreateComponent,MatChipsModule,
     ProjectService,
     ProfileService,
     CvFileService,
-    ContactMessageService
+    ContactMessageService,{ provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
   ],
 })
 export class AppModule { }

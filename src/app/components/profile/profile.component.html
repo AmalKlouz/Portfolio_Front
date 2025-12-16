@@ -1,0 +1,142 @@
+<div class="profile-container">
+  <!-- En-tête -->
+  <div class="profile-header">
+    <h1>
+      <mat-icon>person</mat-icon>
+      {{ isEditMode ? 'Modifier le profil' : 'Créer un profil' }}
+    </h1>
+    <p>Gérez vos informations personnelles et votre photo de profil</p>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement...</p>
+  </div>
+
+  <!-- Formulaire -->
+  <div *ngIf="!loading">
+    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+      <div class="form-layout">
+        
+        <!-- Colonne gauche - Photo -->
+        <mat-card class="photo-card">
+          <mat-card-content>
+            <h2>Photo de profil</h2>
+            
+            <div class="photo-preview-container">
+              <div class="photo-preview">
+                <img *ngIf="previewUrl" 
+                     [src]="previewUrl" 
+                     alt="Photo de profil">
+                <div *ngIf="!previewUrl" class="photo-placeholder">
+                  <mat-icon>person</mat-icon>
+                  <p>Aucune photo</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="photo-actions">
+              <input type="file" 
+                     #photoInput
+                     id="photoInput" 
+                     accept="image/*" 
+                     (change)="onFileSelected($event)"
+                     style="display: none;">
+              
+              <button type="button" 
+                      mat-raised-button 
+                      color="primary"
+                      (click)="photoInput.click()">
+                <mat-icon>upload</mat-icon>
+                {{ previewUrl ? 'Changer la photo' : 'Ajouter une photo' }}
+              </button>
+
+              <button type="button" 
+                      mat-raised-button 
+                      color="warn"
+                      *ngIf="previewUrl"
+                      (click)="removePhoto()">
+                <mat-icon>delete</mat-icon>
+                Supprimer
+              </button>
+            </div>
+
+            <div class="photo-info">
+              <p><mat-icon>info</mat-icon> Formats acceptés: JPG, PNG, GIF</p>
+              <p><mat-icon>info</mat-icon> Taille maximale: 5 MB</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Colonne droite - Informations -->
+        <mat-card class="info-card">
+          <mat-card-content>
+            <h2>Informations personnelles</h2>
+
+            <!-- Nom complet -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Nom complet</mat-label>
+              <input matInput 
+                     formControlName="fullName" 
+                     placeholder="Ex: Jean Dupont"
+                     required>
+              <mat-icon matPrefix>person</mat-icon>
+              <mat-error *ngIf="profileForm.get('fullName')?.invalid">
+                {{ fullNameError }}
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Titre / Poste -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Titre / Poste</mat-label>
+              <input matInput 
+                     formControlName="title" 
+                     placeholder="Ex: Développeur Full Stack"
+                     required>
+              <mat-icon matPrefix>work</mat-icon>
+              <mat-error *ngIf="profileForm.get('title')?.invalid">
+                {{ titleError }}
+              </mat-error>
+            </mat-form-field>
+
+            <!-- Biographie -->
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Biographie</mat-label>
+              <textarea matInput 
+                        formControlName="bio" 
+                        rows="6"
+                        placeholder="Parlez-nous de vous, votre parcours, vos compétences..."
+                        required></textarea>
+              <mat-icon matPrefix>description</mat-icon>
+              <mat-error *ngIf="profileForm.get('bio')?.invalid">
+                {{ bioError }}
+              </mat-error>
+              <mat-hint align="end">
+                {{ profileForm.get('bio')?.value?.length || 0 }} caractères
+              </mat-hint>
+            </mat-form-field>
+
+            <!-- Actions -->
+            <div class="form-actions">
+              <button type="button" 
+                      mat-raised-button 
+                      (click)="cancel()">
+                <mat-icon>close</mat-icon>
+                Annuler
+              </button>
+
+              <button type="submit" 
+                      mat-raised-button 
+                      color="primary"
+                      [disabled]="profileForm.invalid || loading">
+                <mat-icon>save</mat-icon>
+                {{ isEditMode ? 'Mettre à jour' : 'Créer le profil' }}
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
+  </div>
+</div>

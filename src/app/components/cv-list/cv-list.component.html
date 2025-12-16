@@ -4,24 +4,19 @@
       <mat-card-header>
         <mat-icon mat-card-avatar class="cv-icon">description</mat-icon>
         <mat-card-title>{{ cv.filename }}</mat-card-title>
-        <mat-card-subtitle *ngIf="cv.language">{{ cv.language }}</mat-card-subtitle>
       </mat-card-header>
       
-      <mat-card-content>
-        <p class="cv-date" *ngIf="cv.uploadedAt">
-          Uploaded: {{ cv.uploadedAt | date:'mediumDate' }}
-        </p>
-      </mat-card-content>
+      
       
       <mat-card-actions align="end">
-        <button mat-button color="primary" (click)="viewPdf(cv.filename)">
+        <button mat-button color="primary" (click)="viewPdf(cv)">
           <mat-icon>visibility</mat-icon>
           View
         </button>
-        <a mat-button color="accent" [href]="'http://localhost:9000/api/cvfiles/download/' + cv.filename" download>
+        <button mat-button color="accent" (click)="downloadCvFile(cv)">
           <mat-icon>download</mat-icon>
           Download
-        </a>
+        </button>
       </mat-card-actions>
     </mat-card>
   </div>

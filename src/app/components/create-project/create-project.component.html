@@ -1,0 +1,137 @@
+<!-- create-project.component.html -->
+<div class="create-project-container">
+  <h2>{{ isEditMode ? 'Modifier le projet' : 'Créer un nouveau projet' }}</h2>
+  
+  <form [formGroup]="projectForm" (ngSubmit)="onSubmit()" novalidate>
+    
+    <!-- Titre -->
+    <div class="form-group">
+      <label for="title">Titre *</label>
+      <input
+        type="text"
+        id="title"
+        formControlName="title"
+        class="form-control"
+        placeholder="Titre du projet"
+        [class.is-invalid]="projectForm.get('title')?.invalid && projectForm.get('title')?.touched"
+      />
+      <div class="invalid-feedback" *ngIf="projectForm.get('title')?.invalid && projectForm.get('title')?.touched">
+        <span *ngIf="projectForm.get('title')?.errors?.['required']">Le titre est requis</span>
+        <span *ngIf="projectForm.get('title')?.errors?.['minlength']">
+          Minimum {{projectForm.get('title')?.errors?.['minlength']?.requiredLength}} caractères
+        </span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description *</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control"
+        rows="4"
+        placeholder="Description détaillée du projet"
+        [class.is-invalid]="projectForm.get('description')?.invalid && projectForm.get('description')?.touched"
+      ></textarea>
+      <div class="invalid-feedback" *ngIf="projectForm.get('description')?.invalid && projectForm.get('description')?.touched">
+        <span *ngIf="projectForm.get('description')?.errors?.['required']">La description est requise</span>
+        <span *ngIf="projectForm.get('description')?.errors?.['minlength']">
+          Minimum {{projectForm.get('description')?.errors?.['minlength']?.requiredLength}} caractères
+        </span>
+      </div>
+    </div>
+
+    <!-- Technologies -->
+    <div class="form-group">
+      <label for="technologies">Technologies *</label>
+      <input
+        type="text"
+        id="technologies"
+        formControlName="technologies"
+        class="form-control"
+        placeholder="React, TypeScript, Node.js (séparées par des virgules)"
+        [class.is-invalid]="projectForm.get('technologies')?.invalid && projectForm.get('technologies')?.touched"
+      />
+      <div class="invalid-feedback" *ngIf="projectForm.get('technologies')?.invalid && projectForm.get('technologies')?.touched">
+        <span *ngIf="projectForm.get('technologies')?.errors?.['required']">Les technologies sont requises</span>
+      </div>
+    </div>
+
+    <!-- Images -->
+    <div class="form-group">
+      <label>Images</label>
+      
+      <!-- Ajout d'une nouvelle image -->
+      <div class="add-image-container mb-3">
+        <div class="input-group">
+          <input
+            type="text"
+            [(ngModel)]="newImageUrl"
+            [ngModelOptions]="{standalone: true}"
+            class="form-control"
+            placeholder="URL de l'image"
+          />
+          <button type="button" (click)="addImage()" class="btn btn-outline-secondary" [disabled]="!newImageUrl.trim()">
+            <i class="bi bi-plus"></i> Ajouter
+          </button>
+        </div>
+      </div>
+
+      <!-- Liste des images -->
+      <div formArrayName="images">
+        <div *ngIf="imagesFormArray.length === 0" class="alert alert-info">
+          Aucune image ajoutée
+        </div>
+        
+        <div *ngFor="let imageGroup of imagesFormArray.controls; let i = index" 
+             [formGroupName]="i" class="image-item card mb-2">
+          <div class="card-body">
+            <div class="row align-items-center">
+              <div class="col-md-2">
+                <div class="image-preview">
+                  <img [src]="imageGroup.get('imageUrl')?.value" 
+                       alt="Preview" 
+                       class="img-thumbnail"
+                       *ngIf="imageGroup.get('imageUrl')?.value"
+                       onerror="this.src='https://via.placeholder.com/100'">
+                </div>
+              </div>
+              
+              <div class="col-md-8">
+                <input 
+                  type="text" 
+                  formControlName="imageUrl" 
+                  class="form-control"
+                  placeholder="URL de l'image"
+                  [class.is-invalid]="imageGroup.get('imageUrl')?.invalid && imageGroup.get('imageUrl')?.touched"
+                />
+                <div class="invalid-feedback" *ngIf="imageGroup.get('imageUrl')?.invalid && imageGroup.get('imageUrl')?.touched">
+                  L'URL de l'image est requise
+                </div>
+              </div>
+              
+              <div class="col-md-2">
+                <button type="button" (click)="removeImage(i)" class="btn btn-danger btn-sm">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="form-actions mt-4">
+      <button type="submit" [disabled]="projectForm.invalid" class="btn btn-primary me-2">
+        <i class="bi bi-check-circle"></i>
+        {{ isEditMode ? 'Mettre à jour' : 'Créer' }}
+      </button>
+      
+      <button type="button" (click)="onCancel()" class="btn btn-secondary">
+        <i class="bi bi-x-circle"></i> Annuler
+      </button>
+    </div>
+  </form>
+</div>

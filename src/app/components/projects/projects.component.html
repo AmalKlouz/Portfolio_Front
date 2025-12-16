@@ -1,0 +1,95 @@
+<!-- projects.component.html -->
+<div class="projects-container">
+  <!-- En-tête -->
+  <div class="projects-header">
+    <h1>Gestion des Projets</h1>
+    <p>Créez, modifiez et supprimez vos projets portfolio</p>
+  </div>
+
+  <!-- Actions -->
+  <div class="projects-actions">
+    <div class="search-box">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Rechercher un projet</mat-label>
+        <input matInput [(ngModel)]="searchTerm" placeholder="Titre, description ou technologies...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+    
+    <button mat-raised-button color="primary" (click)="createProject()">
+      <mat-icon>add</mat-icon>
+      Nouveau projet
+    </button>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des projets...</p>
+  </div>
+
+  <!-- Tableau des projets -->
+  <div *ngIf="!loading" class="projects-table-container">
+    <div *ngIf="filteredProjects.length === 0" class="empty-state">
+      <mat-icon>folder_open</mat-icon>
+      <h3>Aucun projet trouvé</h3>
+      <p *ngIf="searchTerm">Aucun projet ne correspond à votre recherche</p>
+      <p *ngIf="!searchTerm">Commencez par créer votre premier projet</p>
+      <button mat-raised-button color="primary" (click)="createProject()" *ngIf="!searchTerm">
+        <mat-icon>add</mat-icon>
+        Créer un projet
+      </button>
+    </div>
+
+    <div *ngIf="filteredProjects.length > 0" class="projects-grid">
+      <mat-card *ngFor="let project of filteredProjects" class="project-card">
+        <mat-card-header>
+          <mat-card-title>{{ project.title }}</mat-card-title>
+          <mat-card-subtitle>ID: {{ project.id }}</mat-card-subtitle>
+        </mat-card-header>
+        
+        <mat-card-content>
+          <p class="project-description">{{ project.description | slice:0:150 }}...</p>
+          
+          <div class="project-details">
+            <div class="detail-item">
+              <mat-icon>photo</mat-icon>
+              <span>{{ getImagesCount(project) }} images</span>
+            </div>
+            
+            <div class="detail-item" *ngIf="getTechnologiesArray(project).length > 0">
+              <mat-icon>code</mat-icon>
+              <span>{{ getTechnologiesArray(project).length }} technologies</span>
+            </div>
+          </div>
+
+          <div class="technologies-list" *ngIf="getTechnologiesArray(project).length > 0">
+            <mat-chip-set>
+              <mat-chip *ngFor="let tech of getTechnologiesArray(project) | slice:0:3">
+                {{ tech }}
+              </mat-chip>
+              <mat-chip *ngIf="getTechnologiesArray(project).length > 3" color="primary">
+                +{{ getTechnologiesArray(project).length - 3 }}
+              </mat-chip>
+            </mat-chip-set>
+          </div>
+        </mat-card-content>
+        
+        <mat-card-actions align="end">
+          <button mat-button color="primary" (click)="viewProject(project.id!)">
+            <mat-icon>visibility</mat-icon>
+            Voir
+          </button>
+          <button mat-button color="accent" (click)="editProject(project.id!)">
+            <mat-icon>edit</mat-icon>
+            Éditer
+          </button>
+          <button mat-button color="warn" (click)="deleteProject(project.id!)">
+            <mat-icon>delete</mat-icon>
+            Supprimer
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+</div>

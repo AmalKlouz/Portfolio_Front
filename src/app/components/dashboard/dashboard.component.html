@@ -1,0 +1,421 @@
+<div class="dashboard-container">
+  <!-- En-tête -->
+  <div class="dashboard-header">
+    <h1>Tableau de Bord</h1>
+    <p>Bienvenue dans votre espace d'administration</p>
+  </div>
+
+  <!-- Chargement -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Chargement des données...</p>
+  </div>
+
+  <!-- Contenu principal -->
+  <div *ngIf="!loading">
+    <!-- Cartes de statistiques -->
+    <div class="stats-container">
+      <div class="stat-card">
+        <div class="stat-icon" [style.background]="getIconBgColor('primary')">
+          <mat-icon [style.color]="getColorByName('primary')">rocket_launch</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.totalProjects }}</h3>
+          <p>Projets</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" [style.background]="getIconBgColor('accent')">
+          <mat-icon [style.color]="getColorByName('accent')">photo</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.totalImages }}</h3>
+          <p>Images</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" [style.background]="getIconBgColor('warn')">
+          <mat-icon [style.color]="getColorByName('warn')">mail</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.unreadMessages }}</h3>
+          <p>Messages non lus</p>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon" [style.background]="getIconBgColor('success')">
+          <mat-icon [style.color]="getColorByName('success')">visibility</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3>{{ stats.profileViews }}</h3>
+          <p>Vues du profil</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions rapides -->
+    <div class="quick-actions section">
+      <h2>Actions rapides</h2>
+      <div class="actions-grid">
+        <button *ngFor="let action of quickActions" 
+                mat-raised-button 
+                [color]="action.color"
+                class="action-button"
+                (click)="executeAction(action.action)">
+          <mat-icon>{{ action.icon }}</mat-icon>
+          {{ action.label }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Grille principale -->
+    <div class="dashboard-grid">
+      <!-- Colonne gauche -->
+      <div class="left-column">
+        <!-- Projets récents -->
+        <div class="section">
+          <div class="section-header">
+            <h2>Projets récents</h2>
+            <a [routerLink]="'/portfolio'" class="view-all-link">Voir tous</a>
+          </div>
+          
+          <div *ngIf="recentProjects.length === 0" class="empty-state">
+            <mat-icon>folder</mat-icon>
+            <h3>Aucun projet</h3>
+            <p>Créez votre premier projet pour commencer</p>
+          </div>
+
+          <div *ngFor="let project of recentProjects" class="project-item">
+            <div class="project-info">
+              <div class="project-icon">
+                <img *ngIf="hasProjectImages(project)" 
+                     [src]="getFirstProjectImage(project)" 
+                     [alt]="project.title"
+                     class="project-image"
+                     (error)="onImageError($event, project)">
+                <div *ngIf="!hasProjectImages(project)" class="project-icon-placeholder">
+                  <mat-icon>folder</mat-icon>
+                </div>
+              </div>
+              <div class="project-details">
+                <h4>{{ getShortTitle(project) }}</h4>
+                <p class="project-description">{{ getShortDescription(project) }}</p>
+                <div class="project-meta">
+                  <span class="image-count">
+                    <mat-icon>photo</mat-icon>
+                    {{ getProjectImagesCount(project) }} images
+                  </span>
+                  <span *ngIf="getProjectTechnologiesArray(project).length > 0" class="tech-count">
+                    <mat-icon>code</mat-icon>
+                    {{ getProjectTechnologiesArray(project).length }} technologies
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="project-actions">
+              <button mat-icon-button 
+                      color="primary"
+                      (click)="openProjectPopup(project)"
+                      matTooltip="Voir le projet">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      color="accent"
+                      [routerLink]="'/projects/edit/' + project.id"
+                      matTooltip="Modifier">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button 
+                      color="warn"
+                      (click)="deleteProject(project)"
+                      matTooltip="Supprimer">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Colonne droite -->
+      <div class="right-column">
+        <!-- Messages récents (EN HAUT À DROITE) -->
+        <div class="section">
+          <div class="section-header">
+            <h2>Messages récents</h2>
+            <button class="view-all-link" (click)="openMessagesPopup()">
+              Voir tous
+            </button>
+          </div>
+          
+          <div *ngIf="recentMessages.length === 0" class="empty-state">
+            <mat-icon>mail</mat-icon>
+            <h3>Aucun message</h3>
+            <p>Vous n'avez pas encore reçu de messages</p>
+          </div>
+
+          <div *ngFor="let message of recentMessages" class="message-item">
+            <div class="message-header">
+              <div class="message-sender">
+                <div class="sender-avatar">
+                  {{ message.name?.charAt(0) || '?' }}
+                </div>
+                <div class="sender-info">
+                  <h4>{{ message.name || 'Inconnu' }}</h4>
+                  <p>{{ message.email || 'Non spécifié' }}</p>
+                </div>
+              </div>
+            </div>
+            <p class="message-preview">{{ getMessagePreview(message) }}</p>
+          </div>
+        </div>
+
+        <!-- Profil (EN DESSOUS DES MESSAGES) -->
+        <div class="section">
+          <h2>Votre profil</h2>
+          <mat-card class="profile-card">
+            <mat-card-content class="profile-content">
+              <div class="profile-avatar">
+                <img *ngIf="profileData?.photoUrl" 
+                     [src]="getProfilePhoto()" 
+                     [alt]="getProfileName()"
+                     class="profile-image"
+                     (error)="onImageError($event)">
+                <div *ngIf="!profileData?.photoUrl" class="profile-avatar-placeholder">
+                  <mat-icon>person</mat-icon>
+                </div>
+              </div>
+              <div class="profile-info">
+                <h3>{{ getProfileName() }}</h3>
+                <p class="profile-title">{{ getProfileTitle() }}</p>
+                <p class="profile-bio">{{ getProfileBioShort() }}</p>
+              </div>
+              <div class="profile-actions">
+                <button mat-raised-button 
+                        color="primary"
+                        [routerLink]="'/profile'">
+                  <mat-icon>edit</mat-icon>
+                  Éditer
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- CV actuel -->
+        <div class="section" *ngIf="hasCv">
+          <h2>CV actuel</h2>
+          <mat-card class="cv-card">
+            <mat-card-content class="cv-content">
+              <div class="cv-icon">
+                <mat-icon>description</mat-icon>
+              </div>
+              <div class="cv-info">
+                <h3>{{ currentCv?.filename }}</h3>
+                <p class="cv-size">{{ formatFileSize(currentCv?.size) }}</p>
+                <p class="cv-type">Type: {{ getCvType(currentCv?.contentType) }}</p>
+              </div>
+              <div class="cv-actions">
+                <button mat-raised-button 
+                        color="primary"
+                        (click)="downloadCv()"
+                        matTooltip="Télécharger le CV">
+                  <mat-icon>download</mat-icon>
+                  Télécharger
+                </button>
+                <button mat-raised-button 
+                        color="warn"
+                        (click)="deleteCv()"
+                        matTooltip="Supprimer le CV">
+                  <mat-icon>delete</mat-icon>
+                  Supprimer
+                </button>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <!-- Technologies utilisées -->
+        <div class="section" *ngIf="getAllTechnologies().length > 0">
+          <h2>Technologies utilisées</h2>
+          <div class="technologies-container">
+            <span *ngFor="let tech of getAllTechnologies() | slice:0:10" 
+                  class="tech-tag">
+              {{ tech }}
+            </span>
+            <span *ngIf="getAllTechnologies().length > 10" class="more-tech">
+              +{{ getAllTechnologies().length - 10 }} plus
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Projet -->
+  <div *ngIf="showProjectPopup" class="popup-overlay" (click)="closeProjectPopup()">
+    <div class="popup-content project-popup-content" (click)="$event.stopPropagation()">
+      
+      <button class="close-btn" (click)="closeProjectPopup()" matTooltip="Fermer (ESC)">
+        <mat-icon>close</mat-icon>
+      </button>
+      
+      <div *ngIf="selectedProject" class="project-popup">
+        
+        <!-- Carrousel d'images -->
+        <div class="image-carousel">
+          <img [src]="currentPopupImage" 
+               [alt]="selectedProject.title"
+               class="popup-image"
+               (error)="onImageError($event)">
+          
+          <button *ngIf="selectedProject.images && selectedProject.images.length > 1" 
+                  class="carousel-btn prev" 
+                  (click)="prevImage()"
+                  matTooltip="Image précédente (←)">
+            <mat-icon>chevron_left</mat-icon>
+          </button>
+          
+          <button *ngIf="selectedProject.images && selectedProject.images.length > 1" 
+                  class="carousel-btn next" 
+                  (click)="nextImage()"
+                  matTooltip="Image suivante (→)">
+            <mat-icon>chevron_right</mat-icon>
+          </button>
+          
+          <div *ngIf="selectedProject.images && selectedProject.images.length > 1" 
+               class="carousel-indicators">
+            <span *ngFor="let img of selectedProject.images; let i = index" 
+                  [class.active]="i === currentImageIndex"
+                  (click)="currentImageIndex = i">
+            </span>
+          </div>
+        </div>
+        
+        <!-- Détails du projet -->
+        <div class="project-details-popup">
+          <h2>{{ selectedProject.title }}</h2>
+          
+          <div class="project-description-popup">
+            <h3>Description</h3>
+            <p>{{ selectedProject.description }}</p>
+          </div>
+          
+          <div class="project-technologies-popup" *ngIf="getProjectTechnologiesArray(selectedProject).length > 0">
+            <h3>Technologies</h3>
+            <div class="tech-tags">
+              <span *ngFor="let tech of getProjectTechnologiesArray(selectedProject)" class="tech-tag">
+                {{ tech }}
+              </span>
+            </div>
+          </div>
+          
+          <div class="project-stats-popup">
+            <div class="stat">
+              <mat-icon>photo</mat-icon>
+              <span>{{ selectedProject.images?.length || 0 }} images</span>
+            </div>
+            <div class="stat">
+              <mat-icon>code</mat-icon>
+              <span>{{ getProjectTechnologiesArray(selectedProject).length }} technologies</span>
+            </div>
+          </div>
+
+          <div class="popup-actions">
+            <button mat-raised-button color="accent" [routerLink]="'/projects/edit/' + selectedProject.id" (click)="closeProjectPopup()">
+              <mat-icon>edit</mat-icon>
+              Modifier
+            </button>
+            <button mat-raised-button color="warn" (click)="deleteProject(selectedProject)">
+              <mat-icon>delete</mat-icon>
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Popup Messages -->
+  <div *ngIf="showMessagesPopup" class="popup-overlay" (click)="closeMessagesPopup()">
+    <div class="popup-content messages-popup-content" (click)="$event.stopPropagation()">
+      
+      <button class="close-btn" (click)="closeMessagesPopup()" matTooltip="Fermer (ESC)">
+        <mat-icon>close</mat-icon>
+      </button>
+      
+      <div class="messages-popup">
+        <h2 class="popup-title">
+          <mat-icon>mail</mat-icon>
+          Tous les messages ({{ allMessages.length }})
+        </h2>
+        
+        <div class="messages-layout">
+          <!-- Liste des messages -->
+          <div class="messages-list">
+            <div *ngIf="allMessages.length === 0" class="empty-messages">
+              <mat-icon>inbox</mat-icon>
+              <p>Aucun message</p>
+            </div>
+            
+            <div *ngFor="let message of allMessages" 
+                 class="message-list-item"
+                 [class.selected]="selectedMessage?.id === message.id"
+                 (click)="selectMessage(message)">
+              <div class="message-list-header">
+                <div class="message-list-avatar">
+                  {{ message.name?.charAt(0) || '?' }}
+                </div>
+                <div class="message-list-info">
+                  <h4>{{ message.name || 'Inconnu' }}</h4>
+                  <p class="message-list-email">{{ message.email || 'Non spécifié' }}</p>
+                </div>
+                <button mat-icon-button 
+                        color="warn" 
+                        (click)="deleteMessage(message); $event.stopPropagation()"
+                        matTooltip="Supprimer">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+              <p class="message-list-preview">{{ getMessagePreview(message) }}</p>
+            </div>
+          </div>
+          
+          <!-- Détail du message sélectionné -->
+          <div class="message-detail" *ngIf="selectedMessage">
+            <div class="message-detail-header">
+              <div class="message-detail-avatar">
+                {{ selectedMessage.name?.charAt(0) || '?' }}
+              </div>
+              <div class="message-detail-info">
+                <h3>{{ selectedMessage.name || 'Inconnu' }}</h3>
+                <p class="message-detail-email">
+                  <mat-icon>mail</mat-icon>
+                  {{ selectedMessage.email || 'Non spécifié' }}
+                </p>
+              </div>
+            </div>
+            
+            <div class="message-detail-content">
+              <p>{{ selectedMessage.message }}</p>
+            </div>
+            
+            <div class="message-detail-actions">
+              <button mat-raised-button color="warn" (click)="deleteMessage(selectedMessage)">
+                <mat-icon>delete</mat-icon>
+                Supprimer
+              </button>
+            </div>
+          </div>
+          
+          <div class="message-detail-placeholder" *ngIf="!selectedMessage && allMessages.length > 0">
+            <mat-icon>touch_app</mat-icon>
+            <p>Sélectionnez un message pour le lire</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

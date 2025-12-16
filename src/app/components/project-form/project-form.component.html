@@ -1,0 +1,202 @@
+<div class="project-form-container">
+  <div class="form-header">
+    <h2>{{ mode === 'create' ? 'Créer un nouveau projet' : 'Modifier le projet' }}</h2>
+    <button type="button" (click)="cancel()" class="btn btn-outline-secondary">
+      <i class="bi bi-arrow-left"></i> Retour
+    </button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Form -->
+  <form *ngIf="!loading" [formGroup]="projectForm" (ngSubmit)="onSubmit()" novalidate>
+    
+    <!-- Global Form Error -->
+    <div *ngIf="formError" class="alert alert-danger">
+      {{ formError }}
+    </div>
+
+    <!-- Titre -->
+    <div class="form-group mb-3">
+      <label for="title" class="form-label">Titre *</label>
+      <input
+        type="text"
+        id="title"
+        formControlName="title"
+        class="form-control"
+        placeholder="Titre du projet"
+        [class.is-invalid]="projectForm.get('title')?.invalid && projectForm.get('title')?.touched"
+      />
+      <div class="invalid-feedback">
+        <span *ngIf="projectForm.get('title')?.errors?.['required']">Le titre est requis</span>
+        <span *ngIf="projectForm.get('title')?.errors?.['minlength']">
+          Minimum 3 caractères
+        </span>
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group mb-3">
+      <label for="description" class="form-label">Description *</label>
+      <textarea
+        id="description"
+        formControlName="description"
+        class="form-control"
+        rows="4"
+        placeholder="Description détaillée du projet"
+        [class.is-invalid]="projectForm.get('description')?.invalid && projectForm.get('description')?.touched"
+      ></textarea>
+      <div class="invalid-feedback">
+        <span *ngIf="projectForm.get('description')?.errors?.['required']">La description est requise</span>
+        <span *ngIf="projectForm.get('description')?.errors?.['minlength']">
+          Minimum 10 caractères
+        </span>
+      </div>
+    </div>
+
+    <!-- Technologies -->
+    <div class="form-group mb-3">
+      <label for="technologies" class="form-label">Technologies *</label>
+      <input
+        type="text"
+        id="technologies"
+        formControlName="technologies"
+        class="form-control"
+        placeholder="React, TypeScript, Node.js (séparées par des virgules)"
+        [class.is-invalid]="projectForm.get('technologies')?.invalid && projectForm.get('technologies')?.touched"
+      />
+      <div class="invalid-feedback">
+        <span *ngIf="projectForm.get('technologies')?.errors?.['required']">Les technologies sont requises</span>
+      </div>
+    </div>
+
+    <!-- Images - IMPORT DEPUIS LE PC -->
+    <div class="form-group mb-4">
+      <label class="form-label">Images *</label>
+      
+      <!-- Bouton pour sélectionner des fichiers -->
+      <div class="mb-3">
+        <button type="button" 
+                class="btn btn-outline-primary"
+                (click)="fileInput.click()">
+          <i class="bi bi-upload"></i> Choisir des images depuis votre PC
+        </button>
+        <!-- Champ fichier caché -->
+        <input hidden 
+               #fileInput
+               type="file"
+               multiple
+               accept="image/*"
+               (change)="onImageSelected($event)">
+        <div class="form-text">
+          Formats acceptés : JPG, PNG, GIF, WebP. Taille max : 5MB par image.
+        </div>
+      </div>
+
+      <!-- Compteur de fichiers sélectionnés -->
+      <div *ngIf="selectedFiles.length > 0" class="mb-3">
+        <div class="alert alert-info d-flex align-items-center">
+          <i class="bi bi-images me-2"></i>
+          {{ selectedFiles.length }} image(s) sélectionnée(s)
+        </div>
+      </div>
+
+      <!-- Aperçu des images sélectionnées -->
+      <div *ngIf="selectedFiles.length > 0" class="mb-3">
+        <h6 class="mb-2">Aperçu des images :</h6>
+        <div class="row g-2">
+          <div *ngFor="let file of selectedFiles; let i = index" class="col-md-4 col-lg-3">
+            <div class="image-preview-card card h-100">
+              <div class="card-body p-2 text-center">
+                <div class="image-preview-wrapper mb-2">
+                  <img [src]="imagePreviews[i]" 
+                       alt="Aperçu de {{ file.name }}" 
+                       class="img-fluid rounded"
+                       (error)="onImageError($event)"
+>
+                </div>
+                <p class="mb-1 small text-truncate">{{ file.name | slice:0:15 }}</p>
+                <p class="small text-muted mb-2">{{ formatFileSize(file.size) }}</p>
+                <button type="button" 
+                        (click)="removeImage(i)" 
+                        class="btn btn-danger btn-sm w-100">
+                  <i class="bi bi-trash"></i> Supprimer
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section pour les images existantes (mode édition uniquement) -->
+    <div *ngIf="mode === 'edit' && existingImages.length > 0" class="mb-3">
+  <h6 class="mb-2">Images existantes :</h6>
+  <div class="row g-2">
+    <div *ngFor="let image of existingImages; let i = index" class="col-md-4 col-lg-3">
+      <div class="image-preview-card card h-100">
+        <div class="card-body p-2 text-center">
+
+          <div class="image-preview-wrapper mb-2">
+            <img
+              [src]="image.imageUrl"
+              (error)="onExistingImageError($event)"
+              alt="Project image"
+              class="img-fluid rounded"
+            />
+          </div>
+
+          <p class="mb-1 small text-truncate">
+            Image existante {{ i + 1 }}
+          </p>
+
+          <button
+            type="button"
+            (click)="removeExistingImage(i)"
+            class="btn btn-outline-danger btn-sm w-100">
+            <i class="bi bi-trash"></i> Supprimer
+          </button>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+      <!-- Message d'avertissement si aucune image -->
+      <div *ngIf="selectedFiles.length === 0 && (!existingImages || existingImages.length === 0)" 
+           class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        Veuillez ajouter au moins une image pour votre projet.
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="submit" 
+              [disabled]="projectForm.invalid || isSubmitting || (selectedFiles.length === 0 && (!existingImages || existingImages.length === 0) && mode === 'create')" 
+              class="btn btn-primary me-2">
+        <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-1"></span>
+        <i *ngIf="!isSubmitting" class="bi bi-check-circle me-1"></i>
+        {{ mode === 'create' ? 'Créer le projet' : 'Mettre à jour' }}
+      </button>
+      
+      <button type="button" 
+              (click)="cancel()" 
+              class="btn btn-secondary"
+              [disabled]="isSubmitting">
+        Annuler
+      </button>
+    </div>
+  </form>
+</div>

@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { ProfileListComponent } from './components/profile-list/profile-list.component';
 import { CvListComponent } from './components/cv-list/cv-list.component';
 import { ContactCreateComponent } from './components/contact-create/contact-create.component';
@@ -16,6 +16,7 @@ import { MatIcon } from "@angular/material/icon";
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { ChatbotComponent } from "./components/chat-bot/chat-bot.component";
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +36,8 @@ import { ChatbotComponent } from "./components/chat-bot/chat-bot.component";
     CvListComponent,
     ContactCreateComponent,
     HttpClientModule,
-    ProjectListComponent,
+    ProjectListComponent,    RouterOutlet, // ← AJOUTEZ CE IMPORT
+
     MatDivider,
     MatIcon, MatTooltipModule // ← Ajoutez cette ligne
     ,    ChatbotComponent
@@ -44,13 +46,19 @@ import { ChatbotComponent } from "./components/chat-bot/chat-bot.component";
 })
 export class AppComponent implements OnInit {
   isScrolled = false;
-  private isBrowser: boolean;
+    isHomePage = true;
 
-  constructor(@Inject(PLATFORM_ID) platformId: Object) {
+  private isBrowser: boolean;
+  currentUser: any;
+  constructor(@Inject(PLATFORM_ID) platformId: Object, private router: Router,
+    private authService: AuthService) {
     this.isBrowser = isPlatformBrowser(platformId);
   }
 
   ngOnInit() {
+    this.router.events.subscribe(() => {
+      this.isHomePage = this.router.url === '/';
+    });
     if (this.isBrowser) {
       this.checkScroll();
     }
@@ -103,5 +111,15 @@ export class AppComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  }
+  goToAdmin(): void {
+    if (this.currentUser?.role === 'ADMIN') {
+      this.router.navigate(['/admin']);
+    }
+  }
+
+  // Nouvelle méthode: Se déconnecter
+  logout(): void {
+    this.authService.logout();
   }
 }

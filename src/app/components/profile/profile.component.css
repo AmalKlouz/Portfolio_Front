@@ -1,0 +1,356 @@
+/* ========== CONTENEUR PRINCIPAL ========== */
+.profile-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+/* ========== EN-TÊTE ========== */
+.profile-header {
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.profile-header h1 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 0 0 15px 0;
+  font-size: 32px;
+  color: #333;
+  font-weight: 700;
+}
+
+.profile-header h1 mat-icon {
+  font-size: 36px;
+  width: 36px;
+  height: 36px;
+  color: #3f51b5;
+}
+
+.profile-header p {
+  margin: 0;
+  color: #666;
+  font-size: 16px;
+}
+
+/* ========== CHARGEMENT ========== */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.loading-container p {
+  margin-top: 20px;
+  color: #666;
+  font-size: 16px;
+}
+
+/* ========== LAYOUT DU FORMULAIRE ========== */
+.form-layout {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: 30px;
+}
+
+@media (max-width: 968px) {
+  .form-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ========== CARTES ========== */
+mat-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+mat-card-content {
+  padding: 30px !important;
+}
+
+mat-card h2 {
+  margin: 0 0 25px 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ========== CARTE PHOTO ========== */
+.photo-card {
+  height: fit-content;
+  position: sticky;
+  top: 30px;
+}
+
+.photo-preview-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 25px;
+}
+
+.photo-preview {
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 4px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+  transition: all 0.3s ease;
+}
+
+.photo-preview:hover {
+  border-color: #3f51b5;
+  transform: scale(1.02);
+}
+
+.photo-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #999;
+  text-align: center;
+}
+
+.photo-placeholder mat-icon {
+  font-size: 80px;
+  width: 80px;
+  height: 80px;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}
+
+.photo-placeholder p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* ========== ACTIONS PHOTO ========== */
+.photo-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.photo-actions button {
+  width: 100%;
+  padding: 12px !important;
+  font-weight: 500 !important;
+}
+
+.photo-actions button mat-icon {
+  margin-right: 8px;
+}
+
+/* ========== INFO PHOTO ========== */
+.photo-info {
+  background: #f5f5f5;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.photo-info p {
+  margin: 8px 0;
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.photo-info mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #3f51b5;
+}
+
+/* ========== CARTE INFO ========== */
+.info-card {
+  height: fit-content;
+}
+
+/* ========== CHAMPS DE FORMULAIRE ========== */
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+mat-form-field {
+  display: block;
+}
+
+::ng-deep .mat-mdc-form-field {
+  margin-bottom: 16px;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  background: white;
+}
+
+::ng-deep .mat-mdc-form-field-icon-prefix {
+  padding-right: 12px;
+  color: #666;
+}
+
+/* Textarea */
+textarea {
+  resize: vertical;
+  min-height: 120px;
+  font-family: inherit;
+  line-height: 1.6;
+}
+
+/* ========== ACTIONS DU FORMULAIRE ========== */
+.form-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 2px solid #e0e0e0;
+}
+
+.form-actions button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 32px !important;
+  font-weight: 500 !important;
+  font-size: 15px !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+}
+
+.form-actions button:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.form-actions button[disabled] {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-actions button mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* ========== SNACKBAR ========== */
+::ng-deep .success-snackbar {
+  background: #4caf50 !important;
+  color: white !important;
+}
+
+::ng-deep .error-snackbar {
+  background: #f44336 !important;
+  color: white !important;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+  .profile-container {
+    padding: 20px;
+  }
+
+  .profile-header h1 {
+    font-size: 24px;
+  }
+
+  mat-card-content {
+    padding: 20px !important;
+  }
+
+  .photo-preview {
+    width: 200px;
+    height: 200px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .form-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .profile-header h1 {
+    flex-direction: column;
+    font-size: 22px;
+  }
+
+  .photo-preview {
+    width: 180px;
+    height: 180px;
+  }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+mat-card {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* ========== FOCUS STATES ========== */
+button:focus-visible {
+  outline: 2px solid #3f51b5;
+  outline-offset: 2px;
+}
+
+input:focus,
+textarea:focus {
+  outline: none;
+}
+
+/* ========== DISABLED STATE ========== */
+::ng-deep .mat-mdc-form-field.mat-form-field-disabled {
+  opacity: 0.6;
+}
+
+/* ========== ERREURS ========== */
+::ng-deep .mat-mdc-form-field-error {
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ========== HINT ========== */
+::ng-deep .mat-mdc-form-field-hint {
+  font-size: 12px;
+  color: #666;
+}
